@@ -4,48 +4,55 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 
-public class Driver {    //This is our driver that we will use throughout the framework
-    //  private static WebDriver driver; //from old design
-    private static ThreadLocal<WebDriver> driverPool=new ThreadLocal<>(); // its a pool of drivers so we can run parallel rtests
+import java.util.concurrent.TimeUnit;
 
-    private Driver (){
+public class Driver {
+
+    private Driver() {
+        //we don't create an instance/ object.
     }
-    public static WebDriver getDriver(){
-        if (driverPool.get() == null) {
-            synchronized (Driver.class) {//it will assign one driver to each test scenario in order to run it parallely
-                switch (ConfigurationsReader.getProperties("browser")) {
-                    case "chrome":
-                        WebDriverManager.chromedriver().setup();
-                        driverPool.set(new ChromeDriver());
-                        break;
-                    case "firefox":
-                        WebDriverManager.firefoxdriver().setup();
-                        driverPool.set(new FirefoxDriver());
-                        break;
-                    case "edge":
-                        WebDriverManager.edgedriver().setup();
-                        driverPool.set(new EdgeDriver());
-                        break;
-                    case "chrome-headless":
-                        WebDriverManager.chromedriver().setup();
-                        driverPool.set(new ChromeDriver(new ChromeOptions().setHeadless(true)));
-                        break;
-                    default:
-                        System.out.println("The Driver is NOT Found");
 
-                }
+    //Create static driver instance
+    //static because it can be used globally.
+    //private is to call this instance only in this class
+    private static WebDriver driver;
+
+    //create a public static method to instantiate teh driver
+    public static WebDriver getDriver() {
+        //I want to instantiate the driver instance
+        //if driver is not pointing anywhere
+        //If the driver is already pointing somewhere( being used )
+        //We want to have only one driver
+        if (driver == null) {
+
+            switch (ConfigurationsReader.getProperty("browser")) {
+                case "chrome":
+                    WebDriverManager.chromedriver().setup();
+                    driver = new ChromeDriver();
+                    break;
+
+                case "firefox":
+                    WebDriverManager.firefoxdriver().setup();
+                    driver = new FirefoxDriver();
+                    break;
+
+                case "ie":
+                    WebDriverManager.iedriver().setup();
+                    driver = new InternetExplorerDriver();
+                    break;
+
+                case "chrome-headless":
+                    WebDriverManager.chromedriver().setup();
+                    driver = new ChromeDriver(new ChromeOptions().setHeadless(true));
+                    break;
             }
-        }
-        return driverPool.get();
-    }
-    public static void closeDriver(){
-        if (driverPool.get()!=null){
-            driverPool.get().quit();
-            driverPool.remove();
-        }
 
+        }
+        driver.manage().timeouts().implicitlyWait(15, TimeUnit.SECONDS);
+        driver.manage().window().maximize();
+        return driver;
     }
 }

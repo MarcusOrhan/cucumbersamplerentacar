@@ -10,13 +10,10 @@
         <module name="cucumbersamplerentacar" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="cucumbersamplerentacar" target="17" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="cucumbersamplerentacar" options="--add-modules java.base" />
+      <module name="cucumbersamplerentacar" options="" />
     </option>
   </component>
 </project>

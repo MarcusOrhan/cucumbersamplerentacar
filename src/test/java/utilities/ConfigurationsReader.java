@@ -1,24 +1,27 @@
 package utilities;
-
 import java.io.FileInputStream;
 import java.util.Properties;
-
 public class ConfigurationsReader {
-    //We created this because we need to read our Configuration.properties file
-
-    private static Properties configFile;
+    //    This class will ONLY be used for getting the data from
+//    configuration.properties file
+    private static Properties properties;
     static {
+//        path of the config file
+        String path = "configuration.properties";
         try {
-            FileInputStream fileInputStream = new FileInputStream("Configuration.properties");
-            configFile = new Properties();
-            configFile.load(fileInputStream);
-            fileInputStream.close();
-        }catch (Exception e){
-            System.out.println("Failed to load the properties");
+//            Opening the file
+            FileInputStream file = new FileInputStream(path);
+//            loading the file
+            properties= new Properties();
+            properties.load(file);
+//            closing the file
+            file.close();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public static String getProperties(String key){
-        return configFile.getProperty(key);
+    //    This method accepts the key and returns the value
+    public static String getProperty(String key){
+        return properties.getProperty(key);
     }
 }
